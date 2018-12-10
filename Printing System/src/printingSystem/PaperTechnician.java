@@ -39,6 +39,6 @@ public class PaperTechnician extends Technician {
 
     @Override
     public String toString() {
-        return "[ Paper Technician: " + this.name + " finished refilling papers ]";
+        return "[ Paper Technician: " + this.name + " finished refilling paper process ]";
     }
 }

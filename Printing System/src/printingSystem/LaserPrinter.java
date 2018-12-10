@@ -38,7 +38,6 @@ public class LaserPrinter implements ServicePrinter {
     @Override
     public synchronized void printDocument(Document document) {
         displayMessage(0, 0);
-
         // wait until sufficient resources are obtained to print
         while (this.currentPaperLevel < document.getNumberOfPages()
                 || this.currentTonerLevel < document.getNumberOfPages()) {

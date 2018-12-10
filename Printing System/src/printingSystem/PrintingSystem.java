@@ -1,15 +1,17 @@
-/** *********************************************************************
+/**
+ * ********************************************************************
  * File:	  PrintingSystem.java	(Class)
  * Author:	  Raveen Savinda Rathnayake
  * Date:      10/12/18
  * Version:	  1.0
- ************************************************************************ */
+ * ***********************************************************************
+ */
 
 package printingSystem;
 
 /**
  *
- * This class represent the behaviour of the Printing System.
+ * This class controls the behaviour of the whole Printing System.
  */
 public class PrintingSystem {
 
@@ -17,44 +19,41 @@ public class PrintingSystem {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        
-          // declaring and initializing the two thread groups technician and student
-       
-        ThreadGroup studentGroup = new ThreadGroup("Student Thread Group");
-        ThreadGroup technicianGroup = new ThreadGroup("Technician Thread Group");
+
+        // declaring and initializing the two thread groups technician and student
+        ThreadGroup studentThreadGroup = new ThreadGroup("Student Thread Group");
+        ThreadGroup technicianThreadGroup = new ThreadGroup("Technician Thread Group");
 
         // the laser printer object
-        LaserPrinter laserPrinter = new LaserPrinter("lp-N1-01", studentGroup);
+        LaserPrinter laserPrinter = new LaserPrinter("Laser Printer-01", studentThreadGroup);
 
         // the student and technician threads
-        Student student1 = new Student("A", studentGroup, laserPrinter);
-        Student student2 = new Student("B", studentGroup, laserPrinter);
-        Student student3 = new Student("C", studentGroup, laserPrinter);
-        Student student4 = new Student("D", studentGroup, laserPrinter);
+        Student stud1 = new Student("Student1", studentThreadGroup, laserPrinter);
+        Student stud2 = new Student("Student2", studentThreadGroup, laserPrinter);
+        Student stud3 = new Student("Student3", studentThreadGroup, laserPrinter);
+        Student stud4 = new Student("Student4", studentThreadGroup, laserPrinter);
 
-        Technician paperTechnician = new PaperTechnician("T1",technicianGroup, laserPrinter);
-        Technician tonerTechnician = new TonerTechnician("T2",technicianGroup,laserPrinter);
-        
+        Technician paperTechnician = new PaperTechnician("Technician1", technicianThreadGroup, laserPrinter);
+        Technician tonerTechnician = new TonerTechnician("Technician2", technicianThreadGroup, laserPrinter);
+
         // starting all threads
-        student1.start();
-        student2.start();
-        student3.start();
-        student4.start();
+        stud1.start();
+        stud2.start();
+        stud3.start();
+        stud4.start();
         paperTechnician.start();
         tonerTechnician.start();
 
         // wait for all the threads to complete
         try {
-            student1.join();
-            student2.join();
-            student3.join();
-            student4.join();
+            stud1.join();
+            stud2.join();
+            stud3.join();
+            stud4.join();
             paperTechnician.join();
             tonerTechnician.join();
-        } catch (InterruptedException ex) {
-             System.out.println(ex.toString());
+        } catch (InterruptedException exception) {
+            System.out.println(exception.toString());
         }
-
-
     }
 }

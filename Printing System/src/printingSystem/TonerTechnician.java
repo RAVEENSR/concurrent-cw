@@ -37,6 +37,6 @@ public class TonerTechnician extends Technician {
 
     @Override
     public String toString() {
-        return "[ Toner Technician: " + this.name + " finished refilling toner ]";
+        return "[ Toner Technician: " + this.name + " finished refilling toner process ]";
     }
 }
