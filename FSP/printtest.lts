@@ -1,0 +1,7 @@
+
+STUDENT(N = 3) = ( acquire[i: 1..N] -> use[i] -> release[i] -> STUDENT ).
+
+PRINTER = ( acquire -> release -> PRINTER ) .
+
+|| PRINTER_SHARE = ( a : STUDENT || b : STUDENT
+|| { a, b } :: PRINTER ) .

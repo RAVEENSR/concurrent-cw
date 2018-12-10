@@ -1,0 +1,34 @@
+const ZERO = 0
+const ONE = 1
+const MAX_ID = 2
+const PAPER_TRAY_MAX_SIZE = 3
+range DOC_ID = ZERO..MAX_ID
+set PrintActions = { print[DOC_ID] , acquire, release, refillPrinter, techAcquire }
+set AllUsers = { s1, s2, t1 }
+
+
+PRINTER(PAPER_COUNT = PAPER_TRAY_MAX_SIZE) = PRINTER_FREE[3],
+PRINTER_FREE[ i : ZERO..PAPER_COUNT]  = ( when( i > 0 ) { acquire, techAcquire } -> PRINTER_INUSE[i]
+										| when( i == 0 ) techAcquire -> PRINTER_INUSE[i]
+									    ),
+PRINTER_INUSE[ j : ZERO..PAPER_COUNT] = ( when( j > 0 )  print[doc: DOC_ID] -> release -> PRINTER_FREE[j - 1] 
+										| when( j > 0 )  release -> PRINTER_FREE[j]
+										| when( j == 0 ) refillPrinter -> release -> PRINTER_FREE[PAPER_TRAY_MAX_SIZE]
+  			    						).
+
+
+STUDENT (DOC_COUNT = ONE) = PRINT_DOC[0],
+PRINT_DOC[ i : ZERO..DOC_COUNT] = ( when( i < DOC_COUNT ) acquire -> print[i] -> release -> PRINT_DOC[i + 1]
+								  | when( i >= DOC_COUNT ) end -> END
+								  ) + PrintActions .
+
+
+TECHNITIAN = ( techAcquire -> ( refillPrinter -> release -> TECHNITIAN | release -> TECHNITIAN )) + PrintActions .
+
+
+||MutualExclusion_PRINTER = (  AllUsers :: PRINTER(3)
+							|| s1: STUDENT(3) || s2: STUDENT(2)
+							|| t1: TECHNITIAN
+							).
+
+

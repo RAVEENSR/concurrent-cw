@@ -1,0 +1,30 @@
+const ZERO = 0
+const ONE = 1
+const MAX_ID = 2
+range DOC_ID = ZERO..MAX_ID
+set PRINT_Actions = { print[DOC_ID] , acquire, release, refillPrinter }
+set All_Users = {s1, s2, t1}
+
+
+PRINTER = PRINTER_FREE,
+PRINTER_FREE = (acquire -> PRINTER_INUSE),
+PRINTER_INUSE = ( print[doc: DOC_ID] -> release -> PRINTER_FREE
+				| refillPrinter -> release -> PRINTER_FREE
+			    ).
+
+
+STUDENT (DOC_COUNT = ONE) = PRINT_DOC[0],
+PRINT_DOC[ i : ZERO..DOC_COUNT] = ( when( i < DOC_COUNT ) acquire -> print[i] -> release -> PRINT_DOC[i + 1]
+								  | when( i >= DOC_COUNT ) end -> END
+								  ) + PRINT_Actions .
+
+
+TECHNITIAN = (acquire -> refillPrinter -> release -> TECHNITIAN) + PRINT_Actions .
+
+
+||MutualExclusion_PRINTER = (All_Users :: PRINTER
+							|| s1: STUDENT(3) || s2: STUDENT(2)
+							|| t1: TECHNITIAN
+							).
+
+

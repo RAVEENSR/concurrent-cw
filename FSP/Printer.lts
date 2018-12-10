@@ -1,0 +1,102 @@
+const ZERO = 0
+const ONE = 1
+const MAX_ID = 3
+range DOC_ID = ONE..MAX_ID
+set PRINT_Actions = { print[DOC_ID] , acquire[DOC_ID], release[DOC_ID], refillPrinter }
+set All_Users = {s1, s2, t1}
+
+PRINTER = PRINTER_FREE,
+
+PRINTER_FREE = (acquire[doc: DOC_ID] -> PRINTER_INUSE),
+
+PRINTER_INUSE = ( print[doc: DOC_ID] -> release[DOC_ID] -> PRINTER_FREE
+				| refillPrinter -> release -> PRINTER_FREE
+			).
+
+STUDENT (NUM_OF_DOC = ONE) =( acquire[NUM_OF_DOC] -> if (NUM_OF_DOC > ZERO) 
+							 then (print[NUM_OF_DOC] 
+								-> release[NUM_OF_DOC] -> STUDENT[NUM_OF_DOC - 1])
+							 else (release[NUM_OF_DOC] -> END)
+							) + PRINT_Actions .
+
+
+TECHNITIAN = (acquire -> refillPrinter -> release -> TECHNITIAN) + PRINT_Actions .
+
+
+||MutualExclusion_PRINTER = (All_Users :: PRINTER
+							|| s1: STUDENT(3) || s2: STUDENT(2)
+							|| t1: TECHNITIAN
+							).
+
+/*
+const ZERO = 0
+const ONE = 1
+const MAX_INT = 2
+range INT = ZERO .. MAX_INT
+STUDENT(N = ONE) = ( printer.acquire[i: ONE..N] -> printDocument[i] -> printer.release[i] -> 
+												if (i == N) then END else STUDENT)
+.
+
+*/
+/*
+PRINTER = Print[MAX_INT],
+Print [p : INT] = (check -> ( when (p == 0) error_out_of_pages -> refill -> Print[MAX_INT] 
+					   | when (p > 0) acquire -> release -> Print[p-1] )).
+*/
+
+/*
+The shared variable "PRINTER", initialized to 3.
+The use is "mutually exclusive" because before it can be used
+it has to be "acquired", then it is "locked" & when a user has
+finished using it, it has to be "released", ie. "unlocked".
+*/
+/*
+PRINTER = UnlockedPrinter[ 0 ] ,
+UnlockedPrinter[ p : INT ] = ( acquire -> LockedPrinter[ p ] ) ,
+LockedPrinter[p : INT ] = ( 
+check -> ( when (p == 0) error_out_of_pages -> refill -> LockedPrinter[MAX_INT] 
+					   | when (p > 0) release -> UnlockedPrinter[p-1] )
+).
+
+
+
+TECHNITIAN = (printer.check -> printer.refill -> TECHNITIAN).
+
+|| PRINTER_SHARE = ( a : STUDENT(3)  || t: TECHNITIAN  || b : STUDENT(2)
+|| { a, b, t } :: printer : PRINTER ) .
+
+*/
+/*
+TECHNITIAN[pageCount : range] = (check -> if (pageCount == ZERO)
+										  then (REFILL -> ) ).
+
+RESOURCE = ( acquire -> release -> RESOURCE ).
+USER = ( acquire -> use -> release -> USER ).
+HACKER = ( release -> use -> acquire -> HACKER ).
+|| ATTACKED_RESOURCE = ( a : USER
+|| b : USER
+|| h : HACKER
+|| { a, b, h } :: RESOURCE ).
+*/
+
+/*
+A_USER = ( a.acquire -> a.use -> a.release -> A_USER ) .
+B_USER = ( b.acquire -> b.use -> b.release -> B_USER ) .
+HACKER = ( h.release -> h.use -> h.acquire -> HACKER ).
+AB_RESOURCE = ( { a.acquire, b.acquire, h.release } ->
+{ a.release, b.release } -> AB_RESOURCE ) .
+*/
+/*
+
+RESOURCE_1 = ( a.acquire -> a.release -> RESOURCE_1
+| b.acquire -> b.release -> RESOURCE_1
+| h.release -> h.use -> h.acquire -> RESOURCE_1 ) .
+
+USER = ( acquire -> use -> release -> USER ).
+HACKER = ( release -> use -> acquire -> HACKER ).
+|| RESOURCE_SHARE_1 = ( a : USER
+|| b : USER
+|| h : HACKER
+|| RESOURCE_1 ).
+
+*/

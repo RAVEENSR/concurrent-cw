@@ -1,0 +1,64 @@
+const MAXINT = 2
+range INT = 0 .. MAXINT
+
+// Sets of Actions
+set VarActions = { a[INT], b[INT], acquire, release }
+
+// Sets of Process Labels
+set Writers12 = { w1, w2 }
+set Writers12U = { w1, w2, u }
+set Writers34 = { w3, w4 }
+/*
+The shared variable "X", initialized to 0.
+The use is "mutually exclusive" because before it can be used
+it has to be "acquired", then it is "locked" & when a user has
+finished using it, it has to be "released", ie. "unlocked".
+*/
+X = UnlockedVar[ 0 ] ,
+UnlockedVar[ v : INT ] = ( acquire -> LockedVar[ v ] ) ,
+LockedVar[v : INT ] = ( a[ v ] -> LockedVar[ v ]
+| b[ nv : INT ] -> LockedVar[ nv ]
+| release -> UnlockedVar[ v ] ) .
+// The two Users of the shared variable X
+Writer1_X = ( acquire ->
+b[1] -> a[v : INT] ->
+release ->
+Writer1_X ) +VarActions .
+Writer2_X = ( acquire ->
+b[2] -> a[v : INT] ->
+release ->
+Writer2_X ) +VarActions .
+Inc_X = ( acquire ->
+a[ v : INT ] -> b[ v + 1 ] ->
+release ->
+Inc_X ) +VarActions .
+
+Writer3_X = ( attempt.acquire ->
+( acquire -> b[1] -> a[v : INT] -> release -> Writer3_X
+| blocked -> Writer3_X )
+) +VarActions .
+Writer4_X = ( attempt.acquire ->
+( acquire -> b[2] -> a[v : INT] -> release -> Writer4_X
+| blocked -> Writer4_X )
+) +VarActions .
+// The complete systems
+|| MutualExclusion_SYS = ( Writers12 :: X
+|| w1 : Writer1_X
+|| w2 : Writer2_X
+) .
+|| MutualExclusion_SYS_1 = ( Writers12U :: X
+|| w1 : Writer1_X
+|| w2 : Writer2_X
+|| u : X ) .
+// new implementation
+|| MutualExclusion_SYS_2 = ( Writers34 :: X
+|| w3 : Writer3_X
+|| w4 : Writer4_X
+) .
+// A system that includes a "blocking" action for when a
+// process can't acquire the variable.
+|| MutualExclusion_Blocking_SYS
+= ( Writers34 :: X
+|| w3 : Writer3_X
+|| w4 : Writer4_X ) .
+//----------------------------------------------------------
