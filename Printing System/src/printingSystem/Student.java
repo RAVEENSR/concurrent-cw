@@ -29,9 +29,9 @@ public class Student extends Thread {
     @Override
     public void run() {
         for (int i = 0; i < 5; i++) {
-            Document doc = new Document(this.studentName, "DOC " + (i + 1) , generateRandomPageNumbers());
+            Document doc = new Document(this.studentName, "DOC " + (i + 1) , generateRandomPageNumber());
             this.laserPrinter.printDocument(doc);
-            System.out.println(this);
+            System.out.println("[ Student: " + this.studentName + " finished printing doc " + (i + 1) + " ]");
 
             try {
                 sleep(generateRandomSleepTime());
@@ -46,7 +46,7 @@ public class Student extends Thread {
         return "[ Student: " + this.studentName + " finished printing doc ]";
     }
     
-    private int generateRandomPageNumbers(){
+    private int generateRandomPageNumber(){
         Random ran = new Random();
         return ran.nextInt(25 - 10 + 1) + 10;
     }

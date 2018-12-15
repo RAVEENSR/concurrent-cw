@@ -37,12 +37,12 @@ public class LaserPrinter implements ServicePrinter {
 
     @Override
     public synchronized void printDocument(Document document) {
-        displayMessage(0, 0);
+        System.out.println(this.toString());
         // wait until sufficient resources are obtained to print
         while (this.currentPaperLevel < document.getNumberOfPages()
                 || this.currentTonerLevel < document.getNumberOfPages()) {
             try {
-                this.displayMessage(1, 0);
+                System.out.println("Waiting for printing");
                 wait();
             } catch (InterruptedException exception) {
                 System.out.println(exception.toString());
@@ -55,10 +55,10 @@ public class LaserPrinter implements ServicePrinter {
             currentPaperLevel -= document.getNumberOfPages();
             currentTonerLevel -= document.getNumberOfPages();
             printedDocCount += 1;
-            displayMessage(2, 0);
+            System.out.println("Printing Successful");
         }
 
-        this.displayMessage(0, 0);
+        System.out.println(this.toString());
 
         // notify all other threads
         notifyAll();
@@ -69,10 +69,10 @@ public class LaserPrinter implements ServicePrinter {
         while (this.currentPaperLevel + LaserPrinter.SheetsPerPack > LaserPrinter.Full_Paper_Tray) {
             try {
                 if (this.checkStudentAvailability()) {
-                    displayMessage(3, 0);
+                    System.out.println("Waiting to refill paper");
                     wait(5000);
                 } else {
-                    displayMessage(7, 0);
+                    System.out.println("Student finished printing process and refilling papers can be done");
                     break;
                 }
             } catch (InterruptedException ex) {
@@ -81,8 +81,9 @@ public class LaserPrinter implements ServicePrinter {
         }
 
         if (this.currentPaperLevel + LaserPrinter.SheetsPerPack < LaserPrinter.Full_Paper_Tray) {
-            int newPaperLevel = this.currentPaperLevel += LaserPrinter.SheetsPerPack;
-            this.displayMessage(4, newPaperLevel);
+            this.currentPaperLevel += LaserPrinter.SheetsPerPack;
+            System.out.println("Paper refilling Successful");
+            System.out.println(this.toString());
         }
 
         // notify all other threads
@@ -94,10 +95,10 @@ public class LaserPrinter implements ServicePrinter {
         while (this.currentTonerLevel > LaserPrinter.Minimum_Toner_Level) {
             try {
                 if (this.checkStudentAvailability()) {
-                    displayMessage(5, 0);
+                    System.out.println("Waiting to replace toner");
                     wait(5000);
                 } else {
-                    displayMessage(7, 0);
+                    System.out.println("Student finished printing process and replacing toner can be done");
                     break;
                 }
             } catch (InterruptedException exception) {
@@ -107,7 +108,8 @@ public class LaserPrinter implements ServicePrinter {
 
         if (this.currentTonerLevel < LaserPrinter.Minimum_Toner_Level) {
             this.currentTonerLevel = LaserPrinter.Full_Toner_Level;
-            displayMessage(6, 0);
+            System.out.println("Toner replacing Successful");
+            System.out.println(this.toString());
         }
 
         // notify all other threads
@@ -115,39 +117,6 @@ public class LaserPrinter implements ServicePrinter {
     }
 
     private boolean checkStudentAvailability() {
-        if (students.activeCount() > 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public void displayMessage(int message, int count) {
-        switch (message) {
-            case 0:
-                System.out.println(this.toString());
-                break;
-            case 1:
-                System.out.println("Waiting for printing");
-                break;
-            case 2:
-                System.out.println("Printing Successful");
-                break;
-            case 3:
-                System.out.println("Wait for paper refill");
-                break;
-            case 4:
-                System.out.println("Paper refilling Successful");
-                break;
-            case 5:
-                System.out.println("Wait for toner replace");
-                break;
-            case 6:
-                System.out.println("Toner replacing Successful");
-                break;
-            case 7:
-                System.out.println("Student finished printing process");
-                break;
-        }
+        return students.activeCount() > 0;
     }
 }

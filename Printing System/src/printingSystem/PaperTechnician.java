@@ -27,7 +27,8 @@ public class PaperTechnician extends Technician {
             try {
                 // call the method that tries to refill papers
                 this.printer.refillPaper();
-                System.out.println(this);
+                System.out.println("[ Paper Technician: " + this.name
+                        + " finished refilling paper process " + (i + 1) + " ]");
 
                 // sleep the current thread for a random amount of time
                 sleep(generateRandomSleepTime());
@@ -35,10 +36,5 @@ public class PaperTechnician extends Technician {
                 System.out.println(exception.toString());
             }
         }
-    }
-
-    @Override
-    public String toString() {
-        return "[ Paper Technician: " + this.name + " finished refilling paper process ]";
     }
 }

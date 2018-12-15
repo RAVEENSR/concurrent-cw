@@ -25,7 +25,8 @@ public class TonerTechnician extends Technician {
             try {
                 // call the method that tries to replace the toner cartridge
                 this.printer.replaceTonerCartridge();
-                System.out.println(this);
+                System.out.println("[ Toner Technician: " + this.name
+                        + " finished replacing toner process " + (i + 1) + " ]");
 
                 // sleep the current thread for a random amount of time
                 sleep(generateRandomSleepTime());
@@ -33,10 +34,5 @@ public class TonerTechnician extends Technician {
                 System.out.println(ex.toString());
             }
         }
-    }
-
-    @Override
-    public String toString() {
-        return "[ Toner Technician: " + this.name + " finished refilling toner process ]";
     }
 }

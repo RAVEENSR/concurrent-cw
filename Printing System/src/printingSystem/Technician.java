@@ -32,7 +32,6 @@ public class Technician extends Thread {
     }
 
     public int generateRandomSleepTime(){
-
         Random ran=new Random();
         int random=ran.nextInt(2000 - 1000 + 1) + 1000;
         return random;
