@@ -12,7 +12,7 @@ import java.util.Random;
 /**
  * This class represents the behaviour of a technician of the Printing System.
  */
-public class Technician extends Thread {
+public abstract class Technician extends Thread {
 
     protected LaserPrinter printer;
     protected String name;
@@ -27,9 +27,7 @@ public class Technician extends Thread {
     }
 
     @Override
-    public void run() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    public abstract void run();
 
     public int generateRandomSleepTime(){
         Random ran=new Random();
